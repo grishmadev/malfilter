@@ -1,7 +1,7 @@
 import { EvaluationStatus, type EvaluationResponse, type PackageInfo } from "../types";
 import { extractPackageCreationDate, getLevenshteinDistance, isError, packageExists, searchPackages } from "./package";
 
-export async function verifyPackage(name: string): Promise<EvaluationResponse & { dataSpent: number }> {
+export async function verifyPackage(name: string, range = 20): Promise<EvaluationResponse & { dataSpent: number }> {
   let ds = 0;
   const { exists, dataSpent: dsExists } = await packageExists(name);
   const reason: string[] = [];
@@ -13,7 +13,7 @@ export async function verifyPackage(name: string): Promise<EvaluationResponse & 
     dataSpent: ds
   };
 
-  const searchRes = await searchPackages(name, 20);
+  const searchRes = await searchPackages(name, range);
   if (isError(searchRes)) {
     ds += searchRes.dataSpent;
     return {
@@ -25,11 +25,14 @@ export async function verifyPackage(name: string): Promise<EvaluationResponse & 
   };
 
   const target = searchRes.objects.find(obj => obj.package.name === name);
-  if (!target) return {
-    status: EvaluationStatus.SUSPICIOUS,
-    message: "Cannot find target package.",
-    reason,
-    dataSpent: ds
+  if (!target) {
+    const similarPacks = searchRes.objects.slice(0, 6).map(p => p.package.name);
+    return {
+      status: EvaluationStatus.SUSPICIOUS,
+      message: `Cannot find target package.\nSimilar packages include: ${similarPacks.join(", ")}`,
+      reason,
+      dataSpent: ds
+    }
   }
 
   const { success, reason: evalAgeReason, dataSpent: dsAge } = await evaluateByAge(target);
@@ -53,7 +56,7 @@ export async function verifyPackage(name: string): Promise<EvaluationResponse & 
       possibleTypos.push(candidate);
     }
   }
-  if (possibleTypos.length) reason.push(`Possible Typosquatting: ${possibleTypos.join(",\n")}`);
+  if (possibleTypos.length) reason.push(`Possible Typosquatting: ${possibleTypos.join(",\n")} `);
 
   return {
     status: EvaluationStatus.SUSPICIOUS,
@@ -78,7 +81,7 @@ async function evaluateByAge(target: PackageInfo): Promise<{ success: boolean, r
   if (createdDaysAgo > 365 || weekly > 5000) {
     return {
       success: true,
-      reason: [`Package is ${createdDaysAgo} days old with ${weekly} weekly downloads. safe. probably.`],
+      reason: [`Package is ${createdDaysAgo} days old with ${weekly} weekly downloads. safe.`],
       dataSpent
     };
   }

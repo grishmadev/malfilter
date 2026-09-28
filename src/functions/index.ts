@@ -19,7 +19,7 @@ export function showVerdict(verdict: EvaluationStatus): void {
   console.log(`Verdict:`);
   switch (verdict) {
     case EvaluationStatus.OK:
-      console.log(`\r\tPackage is Safe to install. Probably.`);
+      console.log(`\r\tPackage is Safe to install.`);
       break;
     case EvaluationStatus.SUSPICIOUS:
       console.log(`\r\tPackage looks reasonably suspicious.\r\n\tProceed with caution.`);

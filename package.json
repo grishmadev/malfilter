@@ -1,19 +1,32 @@
 {
-  "name": "hound",
+  "name": "malfilter",
+  "version": "0.1.0",
   "module": "index.ts",
   "devDependencies": {
     "@types/bun": "latest"
   },
+  "repository": {
+    "url": "https://github.com/grishmadev/malfilter"
+  },
+  "bin": {
+    "malfilter": "./src/index.ts"
+  },
+  "main": "./src/index.ts",
   "peerDependencies": {
     "typescript": "^7"
   },
   "private": true,
   "scripts": {
-    "dev": "bun index.ts"
+    "dev": "bun --watch src/index.ts",
+    "build": "tsc",
+    "prepublish": "bun run build"
   },
   "type": "module",
   "dependencies": {
     "@npm/types": "^2.1.0",
     "npms.io": "^2.6.2"
-  }
+  },
+  "files": [
+    "dist"
+  ]
 }

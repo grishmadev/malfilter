@@ -36,7 +36,6 @@ export function isError(packInfo: SearchPackageInfo | SearchPackageErr): packInf
   return typeof packInfo === "object" && "error" in packInfo;
 }
 
-
 export async function extractPackageCreationDate(name: string): Promise<{ date: number, dataSpent: number }> {
   const controller = new AbortController();
   const response = await fetch(`https://registry.npmjs.org/${name}`, {
