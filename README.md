@@ -1,6 +1,6 @@
 # Malfilter
 
-Hound is small security script in the form of CLI to search and determine if packages are safe or not.
+Malfilter is small security script in the form of CLI to search and determine if packages are safe or not.
 
 ## Usage
 
