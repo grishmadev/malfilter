@@ -1,9 +1,9 @@
-import { argv } from "bun"
 import { EvaluationStatus } from "../types/evaluation.ts";
 export * from "./package.ts"
 export * from "./evaluation.ts"
 
 export function getArgs(): string[] {
+  const argv = process.argv;
   let args = argv.slice(2);
   return args;
 }

@@ -1,6 +1,6 @@
 {
   "name": "malfilter",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "module": "index.ts",
   "devDependencies": {
     "@types/bun": "latest"
@@ -9,17 +9,16 @@
     "url": "https://github.com/grishmadev/malfilter"
   },
   "bin": {
-    "malfilter": "./src/index.ts"
+    "malfilter": "./dist/index.js"
   },
-  "main": "./src/index.ts",
+  "main": "./src/index.js",
   "peerDependencies": {
     "typescript": "^7"
   },
-  "private": true,
   "scripts": {
     "dev": "bun --watch src/index.ts",
     "build": "tsc",
-    "prepublish": "bun run build"
+    "prepublish": "bun build ./src/index.ts --outdir ./dist --target node"
   },
   "type": "module",
   "dependencies": {
