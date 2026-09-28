@@ -1,0 +1,19 @@
+{
+  "name": "hound",
+  "module": "index.ts",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^7"
+  },
+  "private": true,
+  "scripts": {
+    "dev": "bun index.ts"
+  },
+  "type": "module",
+  "dependencies": {
+    "@npm/types": "^2.1.0",
+    "npms.io": "^2.6.2"
+  }
+}
