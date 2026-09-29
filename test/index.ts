@@ -1,10 +1,13 @@
 import { executeCmd, getPkgMngr } from "@functions/commands";
+import { getLevenshteinDistance } from "@functions/package";
 import parseArgs from "@functions/parse";
 
 function main(): void {
   testArgs();
   console.log("Passed.");
   testManager();
+  console.log("Passed.");
+  testLevenshteinDistance();
   console.log("Passed.");
 }
 
@@ -43,4 +46,11 @@ function testManager(): void {
   if (success != 0) {
     throw new Error("Manager not installed.");
   }
+}
+
+function testLevenshteinDistance(): void {
+  const a = "express";
+  const b = "expresss";
+  const dist = getLevenshteinDistance(a, b);
+  console.assert(dist === 1, "Failed.");
 }
