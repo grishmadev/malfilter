@@ -19,7 +19,8 @@
     "dev": "bun src/index.ts",
     "test": "bun test/index.ts",
     "build": "tsc",
-    "prepublish": "bun build ./src/index.ts --outdir ./dist --target node"
+    "prepublish": "bun build ./src/index.ts --outdir ./dist --target node",
+    "publish": "bun prepublish && bun publish"
   },
   "type": "module",
   "dependencies": {
