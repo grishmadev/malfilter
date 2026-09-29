@@ -6,7 +6,7 @@ import chalk from "chalk";
 async function main() {
   const { range, name: packageName, install } = parseArgs(getArgs());
 
-  ("> Fetching details...");
+  show("Fetching details", "green");
 
   const { reason, message, status, dataSpent } = await verifyPackage(packageName, range);
 
