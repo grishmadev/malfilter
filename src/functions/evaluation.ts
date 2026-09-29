@@ -86,7 +86,7 @@ async function evaluateByAge(target: PackageInfo): Promise<{ success: boolean, r
   if (createdDaysAgo > 365 || weekly > 5000) {
     return {
       success: true,
-      reason: [`Package is ${createdDaysAgo} days old with ${weekly} weekly downloads. safe.`],
+      reason: [`Package is ${createdDaysAgo} days old with ${weekly} weekly downloads. Safe.`],
       date,
       dataSpent
     };

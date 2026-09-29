@@ -2,19 +2,21 @@
 import parseArgs from "@functions/parse";
 import { execAsyncCmd, getArgs, getConfirmation, getPkgMngr, show, showDataSpent, showReason, showVerdict, verifyPackage } from "./functions";
 import { EvaluationStatus } from "./types";
+import chalk from "chalk";
 async function main() {
   const { range, name: packageName, install } = parseArgs(getArgs());
 
-  console.log("Fetching details...");
+  ("> Fetching details...");
 
   const { reason, message, status, dataSpent } = await verifyPackage(packageName, range);
 
-  console.log(`\rReasoning: ${message}`);
 
   switch (status) {
     case EvaluationStatus.OK:
+      show(`\rReasoning: ${chalk.green(message)}`);
       break;
     default:
+      show(`\rReasoning: ${chalk.red(message)}`);
       showReason(reason);
   }
 
@@ -37,7 +39,7 @@ async function main() {
   }
 
   const mngr = getPkgMngr();
-  show(`Installing package through ${mngr}.`);
+  show(`Installing package through ${mngr}.`, "greenBright");
 
   const success = await execAsyncCmd(packageName);
   if (success != 0) {

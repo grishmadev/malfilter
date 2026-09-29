@@ -1,5 +1,7 @@
 import { EvaluationStatus } from "../types/evaluation.ts";
 import type { PackageInfo } from "../types/api.ts";
+import type { Color, ColorName } from "chalk";
+import chalk from "chalk";
 export * from "./package.ts"
 export * from "./evaluation.ts"
 export * from "./commands.ts"
@@ -18,16 +20,16 @@ export function showReason(reasons: string[]): void {
 }
 
 export function showVerdict(verdict: EvaluationStatus): void {
-  console.log(`\n\rVerdict:`);
+  show(`\n\rVerdict:`);
   switch (verdict) {
     case EvaluationStatus.OK:
-      console.log(`\r\tPackage is Safe to install.`);
+      show(`\r\tPackage is safe to install.`, "green");
       break;
     case EvaluationStatus.SUSPICIOUS:
-      console.log(`\r\tPackage looks reasonably suspicious.\r\n\tProceed with caution.`);
+      show(`\r\tPackage looks reasonably suspicious.\r\n\tProceed with caution.`, "yellow");
       break;
     case EvaluationStatus.UNSAFE:
-      console.log(`\r\tPackage is not safe.\r\nDo not install.`);
+      show(`\r\tPackage is not safe.\r\nDo not install.`, "red");
       break;
   }
 }
@@ -36,18 +38,22 @@ export function showDataSpent(data: number): void {
   let unit = "KB";
   if (data <= 1000) unit = " Bytes";
   let new_data = data <= 1000 ? data : Math.round(data / 1000);
-  console.log(`\nSpent ~ ${new_data}${unit} for this operation.`);
+  show(`\nSpent ~ ${new_data}${unit} for this operation.`, "green");
 }
 
 export function showDetails(target: PackageInfo, createdDate: number): void {
-  show(`Package Name: ${target.package.name}`);
-  show(`Package Repo: ${target.package.links.repository}`);
-  show(`Package Published on: ${new Date(createdDate).toLocaleString()}`);
-  show(`Latest Version: ${target.package.version}`);
-  show(`Publisher: \n\r\tName:\t${target.package.publisher.username}\n\r\tEmail:\t${target.package.publisher.email}`)
-  show(`Weekly Downloads: ${target.downloads.weekly}`);
+  show(`Package Name: ${chalk.bold(target.package.name)}`);
+  show(`Package Repo: ${chalk.bold(target.package.links.repository)}`);
+  show(`Package Published on: ${chalk.bold(new Date(createdDate).toLocaleString())}`);
+  show(`Latest Version: ${chalk.bold(target.package.version)}`);
+  show(`Publisher: \n\r\tName:\t${chalk.bold(target.package.publisher.username)}\n\r\tEmail:\t${chalk.bold(target.package.publisher.email)}`)
+  show(`Weekly Downloads: ${chalk.bold(target.downloads.weekly)}`);
 }
 
-export function show(str: string): void {
-  console.log(`> ${str}`);
+export function show(str: string, color?: ColorName): void {
+  if (color && typeof chalk[color] === "function") {
+    console.log(chalk[color](`> ${str}`));
+  } else {
+    console.log(`> ${str}`);
+  }
 }
