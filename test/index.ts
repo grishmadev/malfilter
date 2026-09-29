@@ -11,18 +11,26 @@ function main(): void {
 main();
 
 function testArgs(): void {
+  const param4 = ["--help"];
+  const args4 = parseArgs(param4);
+  if (args4) {
+    throw new Error("Failed.");
+  }
+
   const param1 = ["express", "--range", "30"];
-  let args1 = parseArgs(param1);
+  const args1 = parseArgs(param1);
   if (args1.install || args1.name !== "express" || args1.range !== 30) {
     throw new Error("Failed.");
   }
+
   const param2 = ["--range", "25", "elysia"];
-  let args2 = parseArgs(param2);
+  const args2 = parseArgs(param2);
   if (args2.install || args2.name !== "elysia" || args2.range !== 25) {
     throw new Error("Failed.");
   }
+
   const param3 = ["--range", "25", "--install", "axios"];
-  let args3 = parseArgs(param3);
+  const args3 = parseArgs(param3);
   if (!args3.install || args3.name !== "axios" || args3.range !== 25) {
     throw new Error("Failed.");
   }

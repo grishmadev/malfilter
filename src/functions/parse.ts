@@ -22,6 +22,9 @@ export default function parseArgs(args: string[]): ParseSchema {
       parseArgs.range = rangeNum;
       i++;
       continue;
+    } else if (["-", "/", ";", "0"].includes(arg!.at(0)!)) {
+      console.log("Invalid Package name.");
+      process.exit(1);
     } else {
       if (!arg) {
         console.error("Package name not specified.");
@@ -34,5 +37,6 @@ export default function parseArgs(args: string[]): ParseSchema {
     console.error("Package name not specified.");
     process.exit(1);
   }
+  console.log("parse schema: ", parseArgs);
   return parseArgs;
 }
