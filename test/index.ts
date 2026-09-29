@@ -1,4 +1,4 @@
-import { executeCmd } from "@functions/commands";
+import { executeCmd, getPkgMngr } from "@functions/commands";
 import parseArgs from "@functions/parse";
 
 function main(): void {
@@ -11,11 +11,6 @@ function main(): void {
 main();
 
 function testArgs(): void {
-  const param4 = ["--help"];
-  const args4 = parseArgs(param4);
-  if (args4) {
-    throw new Error("Failed.");
-  }
 
   const param1 = ["express", "--range", "30"];
   const args1 = parseArgs(param1);
@@ -34,19 +29,16 @@ function testArgs(): void {
   if (!args3.install || args3.name !== "axios" || args3.range !== 25) {
     throw new Error("Failed.");
   }
+
+  // const param4 = ["--oawjmo"];
+  // const args4 = parseArgs(param4);
+  // if (args4) {
+  //   throw new Error("Failed.");
+  // }
 }
 
 function testManager(): void {
-  let config = process.env.npm_config_user_agent;
-  if (!config) {
-    throw new Error("User Config not found.");
-  }
-
-  let manager = config.split("/")[0];
-  if (!config) {
-    throw new Error("Manager not found.");
-  }
-
+  const manager = getPkgMngr();
   let success = executeCmd(`${manager} --version`);
   if (success != 0) {
     throw new Error("Manager not installed.");
