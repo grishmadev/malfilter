@@ -6,7 +6,6 @@
       "name": "hound",
       "dependencies": {
         "@npm/types": "^2.1.0",
-        "npms.io": "^2.6.2",
       },
       "devDependencies": {
         "@types/bun": "latest",
@@ -17,8 +16,6 @@
     },
   },
   "packages": {
-    "@ffflorian/api-client": ["@ffflorian/api-client@2.5.4", "", {}, "sha512-qXQvFcbtyFZFyTnGSyFMP8NOzkpt2eijbsFyrc/5Mzel8EkDXA/3LXKizAVNnIhXmzCaBFIP48R1JwFyjRW+lg=="],
-
     "@npm/types": ["@npm/types@2.1.0", "", {}, "sha512-humQVe2BrWR7Yum5hGDYBnIPnnZJvKSOH/I4QN1ZL2bdb4c4zQHaHupEJ3cOkSJ07G3YfN793ptbNh196BWLgA=="],
 
     "@types/bun": ["@types/bun@1.4.2", "", { "dependencies": { "bun-types": "1.4.2" } }, "sha512-GimotNn7+ZV0uVArItBbriZsR1oNf0+WTzPkdcFrzShI7k2norL0uzEaJT8T33dWr7O/c9ZDuAFQrctKCi72oQ=="],
@@ -66,8 +63,6 @@
     "@typescript/typescript-win32-x64": ["@typescript/typescript-win32-x64@7.0.2", "", { "os": "win32", "cpu": "x64" }, "sha512-0BQ3HkAHHlKLSp1qRvf3SUhGpGsDuhB/jgFw75guyqbxJqEaS0Cw/VFO8i2nHglJUzQCRtMMR/IBAKE3ETMC4g=="],
 
     "bun-types": ["bun-types@1.4.2", "", { "dependencies": { "@types/node": "*" } }, "sha512-bxV1FgK7yBIzjRe5zBozIM4Bem11ZJcCXSrjWRG3YWLt8yFDePu4cLjpebO8OvPeIE9trbyPF4fuj3Cia4Fj3w=="],
-
-    "npms.io": ["npms.io@2.6.2", "", { "dependencies": { "@ffflorian/api-client": "2.5.4" } }, "sha512-sdEJ8Yx9p7liAkkzyhUzzteNlDURGwFL9B4b0lFudHtIJ+8ONzD+vA0Q7SKdsZtMAqnv5pxUNCBeXG2BoPnFVA=="],
 
     "typescript": ["typescript@7.0.2", "", { "optionalDependencies": { "@typescript/typescript-aix-ppc64": "7.0.2", "@typescript/typescript-darwin-arm64": "7.0.2", "@typescript/typescript-darwin-x64": "7.0.2", "@typescript/typescript-freebsd-arm64": "7.0.2", "@typescript/typescript-freebsd-x64": "7.0.2", "@typescript/typescript-linux-arm": "7.0.2", "@typescript/typescript-linux-arm64": "7.0.2", "@typescript/typescript-linux-loong64": "7.0.2", "@typescript/typescript-linux-mips64el": "7.0.2", "@typescript/typescript-linux-ppc64": "7.0.2", "@typescript/typescript-linux-riscv64": "7.0.2", "@typescript/typescript-linux-s390x": "7.0.2", "@typescript/typescript-linux-x64": "7.0.2", "@typescript/typescript-netbsd-arm64": "7.0.2", "@typescript/typescript-netbsd-x64": "7.0.2", "@typescript/typescript-openbsd-arm64": "7.0.2", "@typescript/typescript-openbsd-x64": "7.0.2", "@typescript/typescript-sunos-x64": "7.0.2", "@typescript/typescript-win32-arm64": "7.0.2", "@typescript/typescript-win32-x64": "7.0.2" }, "bin": { "tsc": "bin/tsc" } }, "sha512-8FYau96o3NKOhbjKi/qNvG/W5jhzxkbdm5sj9AbZ/5T5sWqn3hJgLfGx27sRKZWTvyzCP8dLRBTf5tBTSRVUNA=="],
 
