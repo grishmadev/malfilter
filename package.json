@@ -16,7 +16,8 @@
     "typescript": "^7"
   },
   "scripts": {
-    "dev": "bun --watch src/index.ts",
+    "dev": "bun src/index.ts",
+    "test": "bun test/index.ts",
     "build": "tsc",
     "prepublish": "bun build ./src/index.ts --outdir ./dist --target node"
   },

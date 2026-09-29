@@ -1,46 +1,50 @@
 #!/usr/bin/env node
-import { getArgs, showDataSpent, showReason, showVerdict, verifyPackage } from "./functions";
+import parseArgs from "@functions/parse";
+import { execAsyncCmd, getArgs, getConfirmation, getPkgMngr, show, showDataSpent, showReason, showVerdict, verifyPackage } from "./functions";
 import { EvaluationStatus } from "./types";
 async function main() {
-  const args = getArgs();
-  let packageName: string | undefined;
-  let range: number | undefined;
-  for (let i = 0; i < args.length; i++) {
-    let arg = args[i];
-    if (arg === "--range") {
-      range = Number(args[i + 1]);
-      i++;
-    } else {
-      packageName = arg;
-    }
-  }
-  if (range && isNaN(range)) {
-    console.log("Range not a number");
-    return;
-  }
-  if (!packageName) {
-    console.log("Please enter a package name.");
-    return;
-  }
+  const { range, name: packageName, install } = parseArgs(getArgs());
+
   console.log("Fetching details...");
+
   const { reason, message, status, dataSpent } = await verifyPackage(packageName, range);
+
   console.log(`\rReasoning: ${message}`);
+
   switch (status) {
     case EvaluationStatus.OK:
       break;
-    case EvaluationStatus.SUSPICIOUS:
+    default:
       showReason(reason);
-      break;
-    case EvaluationStatus.UNSAFE:
-      showReason(reason);
-      break;
   }
+
   showVerdict(status);
   showDataSpent(dataSpent);
-  if (status == EvaluationStatus.OK) {
-    process.exit(0);
-  } else {
+
+  if (!install) {
+    if (status == EvaluationStatus.OK) {
+      process.exit(0);
+    } else {
+      process.exit(1);
+    }
+  }
+
+  if ([EvaluationStatus.SUSPICIOUS, EvaluationStatus.UNSAFE].includes(status)) {
+    const answer = await getConfirmation("Package is not safe. Do you still want to install it?", true);
+    if (!answer) {
+      process.exit(0);
+    }
+  }
+
+  const mngr = getPkgMngr();
+  show(`Installing package through ${mngr}.`);
+
+  const success = await execAsyncCmd(packageName);
+  if (success != 0) {
+    console.error("Error while installing package.");
     process.exit(1);
   }
+  process.exit(0);
 }
+
 await main();

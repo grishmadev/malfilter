@@ -11,8 +11,9 @@ export async function packageExists(name: string, version?: string): Promise<{
     headers: { 'Authorization': `Bearer ${npmToken}` },
     method: "HEAD"
   });
-  const [entry] = performance.getEntriesByName(url, "resource") as PerformanceResourceTiming[];
-  const dataSpent = entry?.transferSize || 0;
+  const arrayBuffer = await response.arrayBuffer();
+  const dataSpent = arrayBuffer.byteLength;
+
   const result = response.headers.get("cache-control");
   return {
     exists: !!result,
@@ -20,12 +21,16 @@ export async function packageExists(name: string, version?: string): Promise<{
   };
 }
 
-export async function searchPackages(term: string, size = 250, from = 0): Promise<SearchPackageInfo & { dataSpent: number } | SearchPackageErr & { dataSpent: number }> {
+export async function searchPackages(term: string, size = 250, from = 0): Promise<(SearchPackageInfo | SearchPackageErr) & { dataSpent: number }> {
   const url = `https://registry.npmjs.org/-/v1/search?text=${term}&size=${size}&from=${from}`;
   const response = await fetch(url);
-  const [entry] = performance.getEntriesByName(url, "resource") as PerformanceResourceTiming[];
-  const dataSpent = entry?.transferSize || 0;
-  const result = await response.json() as SearchPackageInfo | SearchPackageErr;
+
+  const arrayBuffer = await response.arrayBuffer();
+  const dataSpent = arrayBuffer.byteLength;
+
+  const text = new TextDecoder().decode(arrayBuffer);
+  const result = JSON.parse(text) as SearchPackageInfo | SearchPackageErr;
+
   return {
     ...result,
     dataSpent
@@ -47,13 +52,14 @@ export async function extractPackageCreationDate(name: string): Promise<{ date: 
 
   const pattern = /"created"\s*:\s*"([^"\\]*(?:\\.[^"\\]*)*)"/;
 
-  let dataWasted = 0;
+  let dataSpent = 0;
   try {
     while (true) {
       const { done, value } = await reader.read();
       if (done) {
         break;
       }
+      dataSpent += value.byteLength;
       buffer += decoder.decode(value, { stream: true });
 
       const match = buffer.match(pattern);
@@ -62,17 +68,14 @@ export async function extractPackageCreationDate(name: string): Promise<{ date: 
         if (!creationTime) {
           continue;
         }
-        controller.abort("No reason lol");
-        console.log("Creation Date extracted: ", new Date(creationTime).toLocaleString());
-        dataWasted += buffer.length;
+        controller.abort();
         return {
           date: Date.parse(creationTime),
-          dataSpent: dataWasted
+          dataSpent
         };
       }
 
       if (buffer.length > 1000) {
-        dataWasted += 500;
         buffer = buffer.slice(-500);
       }
 
@@ -82,7 +85,7 @@ export async function extractPackageCreationDate(name: string): Promise<{ date: 
   }
   return {
     date: 0,
-    dataSpent: dataWasted
+    dataSpent
   };
 }
 

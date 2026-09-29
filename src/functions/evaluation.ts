@@ -1,3 +1,4 @@
+import { showDetails } from ".";
 import { EvaluationStatus, type EvaluationResponse, type PackageInfo } from "../types";
 import { extractPackageCreationDate, getLevenshteinDistance, isError, packageExists, searchPackages } from "./package";
 
@@ -35,7 +36,10 @@ export async function verifyPackage(name: string, range = 20): Promise<Evaluatio
     }
   }
 
-  const { success, reason: evalAgeReason, dataSpent: dsAge } = await evaluateByAge(target);
+  console.log("Getting Package Lineage...");
+  const { success, reason: evalAgeReason, dataSpent: dsAge, date: createdDate } = await evaluateByAge(target);
+
+  showDetails(target, createdDate);
   if (success) {
     ds += dsAge;
     return {
@@ -66,7 +70,7 @@ export async function verifyPackage(name: string, range = 20): Promise<Evaluatio
   }
 }
 
-async function evaluateByAge(target: PackageInfo): Promise<{ success: boolean, reason: string[], dataSpent: number }> {
+async function evaluateByAge(target: PackageInfo): Promise<{ success: boolean, reason: string[], date: number, dataSpent: number }> {
   const { weekly } = target.downloads;
   let name = target.package.name;
 
@@ -75,6 +79,7 @@ async function evaluateByAge(target: PackageInfo): Promise<{ success: boolean, r
   if (!createdDaysAgo) return {
     success: false,
     reason: ["Could not extract creation date of " + name],
+    date,
     dataSpent
   };
 
@@ -82,6 +87,7 @@ async function evaluateByAge(target: PackageInfo): Promise<{ success: boolean, r
     return {
       success: true,
       reason: [`Package is ${createdDaysAgo} days old with ${weekly} weekly downloads. safe.`],
+      date,
       dataSpent
     };
   }
@@ -91,6 +97,7 @@ async function evaluateByAge(target: PackageInfo): Promise<{ success: boolean, r
       `Package was created only ${createdDaysAgo} days ago.`,
       `Package has less than 5000 weekly downloads`
     ],
+    date,
     dataSpent
   }
 }
