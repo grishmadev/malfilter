@@ -27,7 +27,7 @@ export async function verifyPackage(name: string, range = 20): Promise<Evaluatio
 
   const target = searchRes.objects.find(obj => obj.package.name === name);
   if (!target) {
-    const similarPacks = searchRes.objects.slice(0, 6).map(p => p.package.name);
+    const similarPacks = searchRes.objects.map(p => p.package.name);
     return {
       status: EvaluationStatus.SUSPICIOUS,
       message: `Cannot find target package.\nSimilar packages include: ${similarPacks.join(", ")}`,
@@ -43,30 +43,50 @@ export async function verifyPackage(name: string, range = 20): Promise<Evaluatio
   if (success) {
     ds += dsAge;
     return {
-      message: evalAgeReason[0]!,
       status: EvaluationStatus.OK,
+      message: evalAgeReason[0]!,
       reason,
       dataSpent: ds
     }
   }
   reason.push(...evalAgeReason);
 
-  const possibleTypos: string[] = [];
+  const { success: tSsuccess, reason: tSreason } = measureTsquat(target, searchRes.objects);
+  if (!tSsuccess) {
+    reason.push(...tSreason);
+    return {
+      status: EvaluationStatus.SUSPICIOUS,
+      message: "Found Typosquatting.",
+      reason,
+      dataSpent: ds
+    }
+  }
+  return {
+    status: EvaluationStatus.OK,
+    message: "Package is safe to install.",
+    reason,
+    dataSpent: ds
+  }
+}
 
-  for (const item of searchRes.objects) {
-    const candidate = item.package.name;
+export function measureTsquat(item: PackageInfo, candidates: PackageInfo[]): { success: boolean, reason: string[] } {
+  const reason: string[] = [];
+  const possibleTypos: string[] = [];
+  let success = false;
+  for (const pkg of candidates) {
+    const name = item.package.name;
+    const candidate = pkg.package.name;
     const dist = getLevenshteinDistance(name, candidate);
-    if (dist > 0 && dist <= 2 && item.score.detail.popularity > 0.8) {
+    if (dist <= 2 && pkg.score.detail.popularity > 0.8) {
       possibleTypos.push(candidate);
     }
   }
   if (possibleTypos.length) reason.push(`Possible Typosquatting: ${possibleTypos.join(",\n")} `);
+  else success = true;
 
   return {
-    status: EvaluationStatus.SUSPICIOUS,
-    message: "Found Typosquatting.",
-    reason,
-    dataSpent: ds
+    success,
+    reason
   }
 }
 
