@@ -1,3 +1,4 @@
+import { show } from ".";
 import { defaultParse, type ParseSchema } from "../types";
 
 export default function parseArgs(args: string[]): ParseSchema {
@@ -5,6 +6,11 @@ export default function parseArgs(args: string[]): ParseSchema {
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
+    if (arg === "--help") {
+      show(`--install\t\t\tInstall a Package after determining its safe.`);
+      show(`--range <number>\t\tPut Range of packages to search to increase discovery. [default = 20]`)
+      process.exit(null);
+    }
     if (arg === "--install" || arg === "-i") {
       parseArgs.install = true;
       continue;

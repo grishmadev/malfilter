@@ -1,4 +1,5 @@
 import { exec } from "child_process";
+import fs from "fs";
 import readline from "node:readline/promises";
 import { stdin as input, stdout as output } from "node:process";
 import { show } from ".";
@@ -51,22 +52,19 @@ export async function getConfirmation(prompt: string, def: boolean = true): Prom
   return answer === "y" || answer === "yes";
 }
 
-export function getPkgMngr(): string {
-  let config = process.env.npm_config_user_agent;
-  if (!config) {
-    throw new Error("User Config not found.");
-  }
+export function getPkgMngr(): Manager {
+  const userAgent = process.env.npm_config_user_agent;
 
-  let manager = config.split("/")[0];
-  if (!manager) {
-    throw new Error("Manager not found.");
-  }
+  if (userAgent?.startsWith("bun")) return "bun";
+  if (userAgent?.startsWith("pnpm")) return "pnpm";
+  if (userAgent?.startsWith("yarn")) return "yarn";
+  if (userAgent?.startsWith("npm")) return "npm";
 
-  let success = executeCmd(`${manager} --version`);
-  if (success != 0) {
-    throw new Error("Manager not installed.");
-  }
-  return manager;
+  if (fs.existsSync("bun.lock") || fs.existsSync("bun.lockb")) return "bun";
+  if (fs.existsSync("pnpm-lock.yaml")) return "pnpm";
+  if (fs.existsSync("yarn.lock")) return "yarn";
+
+  return "npm";
 }
 
 function getInstallCmd(mng: Manager, pkg: string): string {
