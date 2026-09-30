@@ -1,7 +1,6 @@
 # Malfilter
-[malfilter_demo.webm](https://github.com/user-attachments/assets/ca3d9f1a-1320-4990-ae54-7184ec2e6089)
 
-<video src="./assets/malfilter_demo.webm" autoplay loop muted playsinline width="100%"></video>
+![malfilter_demo.webm](/assets/malfilter_demo.webm)
 
 Malfilter is a small security script in the form of CLI to search and determine if packages are safe to install.
 
@@ -21,6 +20,6 @@ Dynamically changes threshold based on popularity, package age and name similari
 
 ### Flags
 
-`--help`: Show available flags like below
-`--install`/`-i`: Install Package after determining if it's safe
-`--range <range>`/`-r <range>`: Determine the size of the search limit to increase discovery (Consumes more data).
+- `--help`: Show available flags like below
+- `--install`/`-i`: Install Package after determining if it's safe
+- `--range <range>`/`-r <range>`: Determine the size of the search limit to increase discovery (Consumes more data).
