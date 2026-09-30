@@ -4,10 +4,26 @@
 
 Malfilter is a small security script in the form of CLI to search and determine if packages are safe to install.
 
+## Installation
+
+- NPM Registry
+
+```
+npm i malfilter@latest
+# or globally by npm i -g malfilter@latest
+```
+
+- From Source
+
+```
+npm i -g https://github.com/grishmadev/malfilter
+```
+
 ## Usage
 
 ```sh
-malfilter -r 30 -i express
+npx malfilter -r 30 -i <pkg name>
+# or malfilter -r 30 -i <pkg name> if installed globally
 ```
 
 ## Features
