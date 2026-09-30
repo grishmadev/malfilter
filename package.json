@@ -1,6 +1,6 @@
 {
   "name": "malfilter",
-  "version": "0.4.4",
+  "version": "0.5.0",
   "module": "index.ts",
   "devDependencies": {
     "@types/bun": "latest"
