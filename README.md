@@ -1,19 +1,25 @@
 # Malfilter
 
-Malfilter is small security script in the form of CLI to search and determine if packages are safe or not.
+![demo_gif](/assets/malfilter_demo.GIF)
+
+Malfilter is a small security script in the form of CLI to search and determine if packages are safe to install.
 
 ## Usage
 
 ```sh
-./index.ts <pkg name>
+malfilter -r 30 -i express
 ```
+
+## Features
+
+- Detection for Typosquatting
+- Package age based Verification
+- Popularity based Verification
+
+Dynamically changes threshold based on popularity, package age and name similarity(Levenshtein Distance) with other packages.
 
 ### Flags
 
+`--help`: Show available flags like below
 `--install`/`-i`: Install Package after determining if it's safe
-`--range <range>`/`-r <range>`: Determine the size of the search to increase discovery. (Consumes more data)
-
-### Conclusion
-
-This script is a highly stripped down variant of [MAGI](https://magi.grishmadev.workers.dev) - A security based revenue project that's being developed privately.
-If this is of interest to you, would recommend checking it out!
+`--range <range>`/`-r <range>`: Determine the size of the search limit to increase discovery (Consumes more data).
