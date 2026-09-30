@@ -1,5 +1,5 @@
 import type { SearchPackageErr, SearchPackageInfo } from "../types";
-import { npmToken } from "./env";
+// import { npmToken } from "./env";
 
 export async function packageExists(name: string, version?: string): Promise<{
   exists: boolean,
@@ -8,7 +8,7 @@ export async function packageExists(name: string, version?: string): Promise<{
   const versionStr = version ? `/${version}` : "";
   const url = `https://registry.npmjs.org/${name}${versionStr}`;
   const response = await fetch(url, {
-    headers: { 'Authorization': `Bearer ${npmToken}` },
+    // headers: { 'Authorization': `Bearer ${npmToken}` },
     method: "HEAD"
   });
   const arrayBuffer = await response.arrayBuffer();
