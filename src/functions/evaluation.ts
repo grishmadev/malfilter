@@ -1,4 +1,4 @@
-import { showDetails } from ".";
+import { show, showDetails } from ".";
 import { EvaluationStatus, type EvaluationResponse, type PackageInfo } from "../types";
 import { extractPackageCreationDate, getLevenshteinDistance, isError, packageExists, searchPackages } from "./package";
 
@@ -37,7 +37,7 @@ export async function verifyPackage(name: string, range = 20): Promise<Evaluatio
     }
   }
 
-  console.log("Getting Package Lineage...");
+  show("Getting Package Lineage", "green");
   const { success: successAge, reason: evalAgeReason, dataSpent: dsAge, date: createdDate } = await evaluateByAge(target);
 
   showDetails(target, createdDate);
