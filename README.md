@@ -8,14 +8,14 @@ Malfilter is a small security script in the form of CLI to search and determine 
 
 - NPM Registry
 
-```
+```sh
 npm i malfilter@latest
 # or globally by npm i -g malfilter@latest
 ```
 
 - From Source
 
-```
+```sh
 npm i -g https://github.com/grishmadev/malfilter
 ```
 
