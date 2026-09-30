@@ -1,4 +1,5 @@
 # Malfilter
+[malfilter_demo.webm](https://github.com/user-attachments/assets/ca3d9f1a-1320-4990-ae54-7184ec2e6089)
 
 <video src="./assets/malfilter_demo.webm" autoplay loop muted playsinline width="100%"></video>
 
