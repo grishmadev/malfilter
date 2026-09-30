@@ -3,6 +3,7 @@ import { EvaluationStatus, type EvaluationResponse, type PackageInfo } from "../
 import { extractPackageCreationDate, getLevenshteinDistance, isError, packageExists, searchPackages } from "./package";
 
 export async function verifyPackage(name: string, range = 20): Promise<EvaluationResponse & { dataSpent: number }> {
+  let success = false;
   let ds = 0;
   const { exists, dataSpent: dsExists } = await packageExists(name);
   const reason: string[] = [];
@@ -37,57 +38,73 @@ export async function verifyPackage(name: string, range = 20): Promise<Evaluatio
   }
 
   console.log("Getting Package Lineage...");
-  const { success, reason: evalAgeReason, dataSpent: dsAge, date: createdDate } = await evaluateByAge(target);
+  const { success: successAge, reason: evalAgeReason, dataSpent: dsAge, date: createdDate } = await evaluateByAge(target);
 
   showDetails(target, createdDate);
-  if (success) {
-    ds += dsAge;
-    return {
-      status: EvaluationStatus.OK,
-      message: evalAgeReason[0]!,
-      reason,
-      dataSpent: ds
-    }
+  ds += dsAge;
+  if (successAge) {
+    success = true;
   }
   reason.push(...evalAgeReason);
 
-  const { success: tSsuccess, reason: tSreason } = measureTsquat(target, searchRes.objects);
+  const { success: tSsuccess, reason: tSreason, dataSpent: tSds } = await measureTsquat(target, new Date(createdDate), searchRes.objects);
+  ds += tSds;
   if (!tSsuccess) {
     reason.push(...tSreason);
     return {
-      status: EvaluationStatus.SUSPICIOUS,
-      message: "Found Typosquatting.",
+      status: EvaluationStatus.UNSAFE,
+      message: "Package looks like a typosquat of another package",
       reason,
       dataSpent: ds
     }
   }
   return {
-    status: EvaluationStatus.OK,
-    message: "Package is safe to install.",
+    status: success ? EvaluationStatus.OK : EvaluationStatus.SUSPICIOUS,
+    message: success ? "Package is safe to install." : "Package is suspicious for below reasons",
     reason,
     dataSpent: ds
   }
 }
 
-export function measureTsquat(item: PackageInfo, candidates: PackageInfo[]): { success: boolean, reason: string[] } {
+export async function measureTsquat(
+  item: PackageInfo,
+  created: Date,
+  candidates: PackageInfo[]
+): Promise<{ success: boolean, dataSpent: number, reason: string[] }> {
   const reason: string[] = [];
   const possibleTypos: string[] = [];
-  let success = false;
+  let dataSpent = 0;
+
   for (const pkg of candidates) {
-    const name = item.package.name;
-    const candidate = pkg.package.name;
-    const dist = getLevenshteinDistance(name, candidate);
-    if (dist <= 2 && pkg.score.detail.popularity > 0.8) {
-      possibleTypos.push(candidate);
+    const targetName = item.package.name;
+    const candidateName = pkg.package.name;
+
+    if (targetName === candidateName) continue;
+
+    const dist = getLevenshteinDistance(targetName, candidateName);
+
+    const isPopularCandidate = (pkg.downloads.weekly > item.downloads.weekly * 10) || (pkg.score.detail.popularity > 0.8);
+
+    if (dist <= 3 && isPopularCandidate) {
+      const { date, dataSpent: ds } = await extractPackageCreationDate(candidateName);
+      dataSpent += ds;
+
+      // target created AFTER candidate
+      if (created.getTime() > date) {
+        possibleTypos.push(`${candidateName} (${pkg.downloads.weekly.toLocaleString()} weekly downloads)`);
+      }
     }
   }
-  if (possibleTypos.length) reason.push(`Possible Typosquatting: ${possibleTypos.join(",\n")} `);
-  else success = true;
+
+  if (possibleTypos.length > 0) {
+    reason.push(`Suspected typosquat of established package(s): ${possibleTypos.join(", ")}`);
+  }
 
   return {
-    success,
+    success: possibleTypos.length === 0,
+    dataSpent,
     reason
-  }
+  };
 }
 
 async function evaluateByAge(target: PackageInfo): Promise<{ success: boolean, reason: string[], date: number, dataSpent: number }> {
@@ -102,22 +119,15 @@ async function evaluateByAge(target: PackageInfo): Promise<{ success: boolean, r
     date,
     dataSpent
   };
+  if (date === 0) return { success: false, reason: ["Could not extract creation date of " + name], date, dataSpent };
+  let reason = [];
+  if (createdDaysAgo <= 365) reason.push(`Package was created only ${createdDaysAgo} days ago.`);
+  if (weekly <= 5000) reason.push(`Package has less than 5000 weekly downloads`);
 
-  if (createdDaysAgo > 365 || weekly > 5000) {
-    return {
-      success: true,
-      reason: [`Package is ${createdDaysAgo} days old with ${weekly} weekly downloads. Safe.`],
-      date,
-      dataSpent
-    };
-  }
   return {
-    success: false,
-    reason: [
-      `Package was created only ${createdDaysAgo} days ago.`,
-      `Package has less than 5000 weekly downloads`
-    ],
+    success: reason.length === 0,
+    reason,
     date,
     dataSpent
-  }
+  };
 }

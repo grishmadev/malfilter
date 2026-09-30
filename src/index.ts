@@ -17,9 +17,9 @@ async function main() {
       break;
     default:
       show(`\rReasoning: ${chalk.red(message)}`);
-      showReason(reason);
   }
 
+  showReason(reason);
   showVerdict(status);
   showDataSpent(dataSpent);
 

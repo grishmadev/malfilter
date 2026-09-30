@@ -1,6 +1,6 @@
 import { EvaluationStatus } from "../types/evaluation.ts";
 import type { PackageInfo } from "../types/api.ts";
-import type { Color, ColorName } from "chalk";
+import type { ColorName } from "chalk";
 import chalk from "chalk";
 export * from "./package.ts"
 export * from "./evaluation.ts"
@@ -14,7 +14,7 @@ export function getArgs(): string[] {
 
 export function showReason(reasons: string[]): void {
   reasons.length ?? console.log("Reasons to consider:");
-  for (const reason in reasons) {
+  for (const reason of reasons) {
     console.log(`\t - ${reason}`);
   }
 }
