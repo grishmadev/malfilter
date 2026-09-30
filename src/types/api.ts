@@ -1,7 +1,7 @@
 export interface SearchPackageInfo {
   objects: PackageInfo[],
   time: Date,
-  count: number
+  total: number
 }
 
 export interface SearchPackageErr {
