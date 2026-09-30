@@ -1,6 +1,6 @@
 # Malfilter
 
-![demo_gif](/assets/malfilter_demo.webm)
+<video src="./assets/malfilter_demo.webm" autoplay loop muted playsinline width="100%"></video>
 
 Malfilter is a small security script in the form of CLI to search and determine if packages are safe to install.
 
