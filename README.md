@@ -1,6 +1,6 @@
 # Malfilter
 
-![demo_gif](/assets/malfilter_demo.GIF)
+![demo_gif](/assets/malfilter_demo.webm)
 
 Malfilter is a small security script in the form of CLI to search and determine if packages are safe to install.
 
